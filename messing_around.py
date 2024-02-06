@@ -21,17 +21,14 @@ var = data.variables[var_name][:]
 # Create a figure and axes with a specific projection
 fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
-# Creating levels
-#norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
-
 # Plot the data on a latitude and longitude scale
-im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(),  cmap='viridis')
+im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), levels=np.linspace(0, 1, 10 + 1),  cmap='viridis')
 
 # Mask out land
 ax.add_feature(cfeature.LAND, zorder=1, facecolor='w')
 
 # Add coastlines
-ax.coastlines('50m')
+ax.coastlines('10m')
 #ax.add_feature(cfeature.COASTLINE, zorder=2)
 
 # Add a colorbar
