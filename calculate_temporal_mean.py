@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 import os
 
 # Open the netCDF file
-file_name = 'SST_1993-2022.nc'
+file_name = 'chlorophyll_1993-2022.nc'
 nc = Dataset(f'Data/{file_name}', 'r')
 var_name = os.path.basename(file_name).split("_1993-2022.nc")[0]
 print(f"Variable name: {var_name}")

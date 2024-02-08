@@ -1,3 +1,4 @@
+from matplotlib.colors import LogNorm, SymLogNorm, AsinhNorm, BoundaryNorm
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -17,13 +18,13 @@ lon = data.variables['lon'][:]
 
 # Extract the data variable you want to plot
 var = data.variables[var_name][:]
-var_log = np.log(var)  # Take the logarithm of the variable
+# var_log = np.log(var)  # Take the logarithm of the variable
 
 # Create a figure and axes with a specific projection
 fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
 # Plot the data on a latitude and longitude scale
-im = ax.pcolormesh(lon, lat, var_log, transform=ccrs.PlateCarree(), cmap='viridis')
+im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(), cmap='viridis', norm=AsinhNorm(linear_width=1e-1, vmin=0, vmax=1))
 
 # Mask out land
 ax.add_feature(cfeature.LAND, zorder=1, facecolor='w')

@@ -60,7 +60,7 @@ ax.coastlines('50m')
 cbar = plt.colorbar(im, ax=ax)
 
 # Set the title and labels
-ax.set_title('Depth of the Ocean Floor')
+ax.set_title('Depth')
 ax.set_xlabel('Longitude')
 ax.set_ylabel('Latitude')
 
