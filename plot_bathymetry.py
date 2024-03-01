@@ -21,7 +21,7 @@ path = "Data/bathymetry.nc"
 data = nc.Dataset(path)
 var_name = 'elevation'
 
-# Extract the latitude and longitude variables
+# Extract the latitude and longitude variables and downsample by a factor of 10
 lat_var = data.variables.get('lat') or data.variables.get('latitude')
 if lat_var is not None:
     lat = lat_var[:]
@@ -37,6 +37,12 @@ else:
 var = data.variables[var_name][:]
 print(var.min(), var.max())
 
+# Downsample the data
+downsample_factor = 10  # Adjust this value as needed
+downsampled_lon = lon[::downsample_factor]
+downsampled_lat = lat[::downsample_factor]
+downsampled_var = var[::downsample_factor, ::downsample_factor]
+
 # Create a figure and axes with a specific projection
 fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': ccrs.PlateCarree()})
 
@@ -47,7 +53,7 @@ fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': ccrs.PlateCar
 #im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(),  cmap='coolwarm')
 
 # Plot the data on a latitude and longitude scale
-im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='autumn')
+im = ax.pcolormesh(downsampled_lon, downsampled_lat, downsampled_var, transform=ccrs.PlateCarree(), cmap='viridis', vmax=0)
 
 # Set the extent of the map to match your data
 ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
@@ -70,7 +76,7 @@ ax.coastlines('50m')
 cbar = plt.colorbar(im, ax=ax)
 
 # Set the title and labels
-ax.set_title('Depth')
+ax.set_title('Depth ($m$)')
 ax.set_xlabel('Longitude')
 ax.set_ylabel('Latitude')
 
@@ -78,7 +84,7 @@ ax.set_ylabel('Latitude')
 plt.show()
 
 # Save the plot as a tif file
-#plt.savefig('Output/bathymetry.tif', format='tif')
+plt.savefig('Output/bathymetry.tif', format='tif')
 
 # Close the plot
-#plt.close()
+plt.close()
