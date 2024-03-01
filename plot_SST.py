@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -5,6 +6,15 @@ import netCDF4 as nc
 import os
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+matplotlib.use('qtagg')
+
+from matplotlib import rc
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
+#matplotlib.rcParams['figure.dpi'] = 400
 
 # Read the netCDF file
 path = "Data/SST_mean.nc"
@@ -63,9 +73,9 @@ ax.coastlines('50m')
 cbar = plt.colorbar(im, ax=ax)
 
 # Set the title and labels
-ax.set_title('Sea Surface Temperature')
-ax.set_xlabel('Longitude')
-ax.set_ylabel('Latitude')
+ax.set_title(r'Sea Surface Temperature ($^{\circ}$C)')
+ax.set_xlabel(r'Longitude')
+ax.set_ylabel(r'Latitude')
 
 # Show the plot
 plt.show()
