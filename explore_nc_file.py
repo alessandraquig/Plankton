@@ -1,7 +1,7 @@
 import netCDF4 as nc
 
 # Open the NetCDF file
-file_path = "Data/bathymetry.nc"
+file_path = "Data/chlorophyll_mean.nc"
 dataset = nc.Dataset(file_path)
 
 # View the metadata
