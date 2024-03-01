@@ -1,4 +1,4 @@
-from matplotlib.colors import AsinhNorm, LogNorm, SymLogNorm, BoundaryNorm
+from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -34,8 +34,9 @@ fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarr
 
 # Plot the data on a latitude and longitude scale
 boundaries = [0, 0.5, 1, 2, 3, 4, 5]
-colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'cyan', 'black']
-im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Greens', norm = BoundaryNorm(boundaries, ncolors=len(boundaries) - 1))
+colors = ['#f8fcf6','#e2f1da', '#bfdfb3', '#8fc483', '#74b270', '#48854a', '#1f4521']
+cmap = ListedColormap(colors)
+im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap=cmap, levels = [0, 0.1, 0.3, 0.6, 1, 2, 5])
 
 # Set the extent of the map to match your data
 ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
