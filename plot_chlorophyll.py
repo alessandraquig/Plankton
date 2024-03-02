@@ -1,11 +1,20 @@
+import matplotlib
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
-import os
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+
+matplotlib.use('qtagg')
+
+from matplotlib import rc
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 
 # Read the netCDF file
 path = "Data/chlorophyll_mean.nc"
@@ -33,7 +42,6 @@ fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarr
 #im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(),  cmap='coolwarm')
 
 # Plot the data on a latitude and longitude scale
-boundaries = [0, 0.5, 1, 2, 3, 4, 5]
 colors = ['#f8fcf6','#e2f1da', '#bfdfb3', '#8fc483', '#74b270', '#48854a', '#1f4521']
 cmap = ListedColormap(colors)
 im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap=cmap, levels = [0, 0.1, 0.3, 0.6, 1, 2, 5])
@@ -59,15 +67,18 @@ ax.coastlines('50m')
 cbar = plt.colorbar(im, ax=ax)
 
 # Set the title and labels
-ax.set_title('Surface Chlorophyll Concentration (mg/m^3)')
-ax.set_xlabel('Longitude')
-ax.set_ylabel('Latitude')
+ax.set_title(r'Surface Chlorophyll Concentration ($mg/m^{3}$)')
+ax.set_xlabel(r'Longitude')
+ax.set_ylabel(r'Latitude')
 
 # Show the plot
 plt.show()
 
+# Save plot as png
+#plt.savefig('Output/chlorophyll_mean.png', format='png')
+
 # Save the plot as a tif file
-plt.savefig('Output/chlorophyll_mean.tif', format='tif')
+#plt.savefig('Output/chlorophyll_mean.tif', format='tif')
 
 # Close the plot
 plt.close()
