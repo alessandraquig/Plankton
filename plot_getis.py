@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib import colors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
@@ -16,13 +17,13 @@ this_rc_params = {
 plt.rcParams.update(this_rc_params)
 #matplotlib.rcParams['figure.dpi'] = 400
 
-def plot_richness(plankton, layer):
+def plot_getis(plankton, layer):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
     :return: fig, ax, cbar
     """
-    path = f"Data/{plankton}richness{layer}.nc"
+    path = f"Data/{plankton}getis{layer}.nc"
 
     data = nc.Dataset(path)
     var_name = os.path.basename(path).split(".")[0] # Check this
@@ -48,8 +49,12 @@ def plot_richness(plankton, layer):
     # Create a figure and axes with a specific projection
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
+    # Norm the data so 1 is neutral
+    #norm=colors.TwoSlopeNorm(vmin=0, vcenter=1, vmax=3.5)
+    norm = matplotlib.colors.LogNorm()
+
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PiYG', norm=norm)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
@@ -76,7 +81,7 @@ def plot_richness(plankton, layer):
         layer_name = "Epipelagic"
     if layer == "depth":
         layer_name = "Mesopelagic"
-    ax.set_title(rf'Richness')
+    ax.set_title(rf'Getis Ord')
     #ax.set_xlabel(r'Longitude')
     #ax.set_ylabel(r'Latitude')
 
@@ -91,11 +96,11 @@ if __name__ == "__main__":
     if layer == "depth":
         layer_name = "meso"
 
-    im, ax, cbar = plot_richness('phyto', 'surf')
-    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Richness')
+    im, ax, cbar = plot_getis('phyto', 'surf')
+    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Getis Ord')
 
     # Save the plot as a tif file
-    plt.savefig(f'Output/{layer_name}_{plankton}_rich.tif', format='tif')
+    plt.savefig(f'Output/{layer_name}_{plankton}_getis.tif', format='tif')
 
     # Close the plot
     plt.close()

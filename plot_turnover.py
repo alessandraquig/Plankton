@@ -16,16 +16,16 @@ this_rc_params = {
 plt.rcParams.update(this_rc_params)
 #matplotlib.rcParams['figure.dpi'] = 400
 
-def plot_richness(plankton, layer):
+def plot_turnover(plankton, layer):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
     :return: fig, ax, cbar
     """
-    path = f"Data/{plankton}richness{layer}.nc"
+    path = f"Data/{plankton}turnover{layer}.nc"
 
     data = nc.Dataset(path)
-    var_name = os.path.basename(path).split(".")[0] # Check this
+    var_name = 'turnover'
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -49,7 +49,7 @@ def plot_richness(plankton, layer):
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PuRd')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
@@ -76,7 +76,7 @@ def plot_richness(plankton, layer):
         layer_name = "Epipelagic"
     if layer == "depth":
         layer_name = "Mesopelagic"
-    ax.set_title(rf'Richness')
+    ax.set_title(rf'Turnover')
     #ax.set_xlabel(r'Longitude')
     #ax.set_ylabel(r'Latitude')
 
@@ -84,18 +84,18 @@ def plot_richness(plankton, layer):
 
 if __name__ == "__main__":
 
-    layer = 'surf'
-    plankton = 'phyto'
+    layer = 'depth'
+    plankton = 'zoo'
     if layer == "surf":
         layer_name = "epi"
     if layer == "depth":
         layer_name = "meso"
 
-    im, ax, cbar = plot_richness('phyto', 'surf')
-    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Richness')
+    im, ax, cbar = plot_turnover(plankton, layer)
+    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Turnover')
 
     # Save the plot as a tif file
-    plt.savefig(f'Output/{layer_name}_{plankton}_rich.tif', format='tif')
+    plt.savefig(f'Output/{layer_name}_{plankton}_turn.tif', format='tif')
 
     # Close the plot
     plt.close()
