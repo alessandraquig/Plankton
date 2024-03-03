@@ -5,7 +5,7 @@ import cartopy.feature as cfeature
 import netCDF4 as nc
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LinearSegmentedColormap
 
 matplotlib.use('qtagg')
 
@@ -31,11 +31,18 @@ def plot_chlorophyll():
     var = data.variables[var_name][:]
     print(f'min = {var.min()}, max = {var.max()}, mean = {var.mean()}')
 
+    # Define custom levels for contourf
+    levels = [0, 0.1, 0.3, 0.6, 1, 2, 5]
+
+    # Create a custom colormap emphasizing low values
+    colors = ['#f7fcf5', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#127031', '#00441b']
+    cmap = LinearSegmentedColormap.from_list("custom_green", colors)
+
     # Create a figure and axes with a specific projection
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
     # Plot the data on a latitude and longitude scale using the custom colormap
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Greens', norm=LogNorm(), levels=np.logspace(-2, 1, 7))
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap=cmap, levels=levels) #, extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
