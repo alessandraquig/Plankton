@@ -7,7 +7,7 @@ import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from matplotlib.colors import LogNorm
 
-matplotlib.use('qtagg')
+matplotlib.use('Agg')
 
 from matplotlib import rc
 this_rc_params = {
@@ -66,12 +66,9 @@ def plot_chlorophyll():
 if __name__ == "__main__":
 
     im, ax, cbar = plot_chlorophyll()
-    
-    # Show the plot
-    plt.show()
 
     # Save the plot as a tif file
-    plt.savefig('Output/chlorophyll_mean.tif', format='tif')
+    plt.savefig('Output/chlorophyll.tif', format='tif')
 
     # Close the plot
     plt.close()

@@ -6,7 +6,7 @@ import netCDF4 as nc
 import os
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
-matplotlib.use('qtagg')
+matplotlib.use('Agg')
 
 from matplotlib import rc
 this_rc_params = {
@@ -77,10 +77,6 @@ def plot_nestedness(plankton, layer):
     cbar = plt.colorbar(im, ax=ax)
 
     # Set the title and labels
-    if layer == "surf":
-        layer_name = "Epipelagic"
-    if layer == "depth":
-        layer_name = "Mesopelagic"
     ax.set_title(rf'Nestedness')
     ax.set_xlabel(r'Longitude')
     ax.set_ylabel(r'Latitude')
@@ -89,13 +85,18 @@ def plot_nestedness(plankton, layer):
 
 if __name__ == "__main__":
 
-    im, ax, cbar = plot_nestedness('phyto', 'surf')
+    layer = 'surf'
+    plankton = 'phyto'
+    if layer == "surf":
+        layer_name = "epi"
+    if layer == "depth":
+        layer_name = "meso"
 
-    # Show the plot
-    plt.show()
+    im, ax, cbar = plot_nestedness('phyto', 'surf')
+    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Nestedness')
 
     # Save the plot as a tif file
-    #plt.savefig(f'Output/{plankton}_nest_{layer}.tif', format='tif')
+    plt.savefig(f'Output/{layer_name}_{plankton}_nest.tif', format='tif')
 
     # Close the plot
     plt.close()

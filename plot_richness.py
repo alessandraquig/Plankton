@@ -20,7 +20,7 @@ def plot_richness(plankton, layer):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
-    :return: fig, ax
+    :return: fig, ax, cbar
     """
     path = f"Data/{plankton}richness{layer}.nc"
 
@@ -84,16 +84,18 @@ def plot_richness(plankton, layer):
 
 if __name__ == "__main__":
 
-    # Plot the data on a latitude and longitude scale
-    layer = "surf"          # "surf" or "depth"
-    plankton = "phyto"      # "phyto" or "zoo"
-    im, ax, cbar = plot_richness(plankton, layer)
+    layer = 'surf'
+    plankton = 'phyto'
+    if layer == "surf":
+        layer_name = "epi"
+    if layer == "depth":
+        layer_name = "meso"
 
-    # Show the plot
-    plt.show()
+    im, ax, cbar = plot_richness('phyto', 'surf')
+    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Richness')
 
     # Save the plot as a tif file
-    plt.savefig(f'Output/{plankton}_rich_{layer}.tif', format='tif')
+    plt.savefig(f'Output/{layer_name}_{plankton}_rich.tif', format='tif')
 
     # Close the plot
     plt.close()
