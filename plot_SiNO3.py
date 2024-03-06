@@ -37,12 +37,17 @@ def plot_SiNO3(layer):
     # Extract the data variable you want to plot
     var = data.variables[var_name][:]
     print(var.min(), var.max())
+    print(np.isnan(np.ma.log(var)))
+
+    # Transform data
+    base = 10
+    logvar = np.ma.log(var)/np.ma.log(base)
 
     # Create a figure and axes with a specific projection
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
     # Plot the data on a latitude and longitude scale
-    im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PiYG', norm=CenteredNorm(vcenter=1))
+    im = ax.pcolormesh(lon, lat, logvar, transform=ccrs.PlateCarree(), cmap='PiYG', norm=TwoSlopeNorm(vcenter=np.log10(1), vmax=np.log10(10), vmin=np.log10(0.0004)))
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
@@ -63,6 +68,10 @@ def plot_SiNO3(layer):
 
     # Add a colorbar
     cbar = plt.colorbar(im, ax=ax)
+    # Place ticks at whole powers of the base.
+    cbar.ax.yaxis.set_major_locator(plt.MultipleLocator(1))
+    # Define your custom tick formatter function to undo the log transformation
+    cbar.ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, pos: f'${base:d}^{{{x:.0f}}}$'))
 
     # Set the title and labels
     ax.set_title(r'Si/NO$^{3}$ Ratio')
@@ -78,8 +87,10 @@ if __name__ == "__main__":
 
     if layer == 'depth':
         plt.savefig('Output/SiNO3_meso.pdf', format='pdf')
+        print('Saved figure')
     elif layer == 'surf':
-        plt.savefig('Output/SiNO3_epi.pdf', format='pdf')
+        plt.savefig('Output/SiNO3_epi.tif', format='tif')
+        print('Saved figure')
 
 
     # Close the plot
