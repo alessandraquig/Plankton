@@ -1,16 +1,28 @@
+import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+from matplotlib.colors import TwoSlopeNorm, LogNorm, CenteredNorm
+from matplotlib.ticker import FuncFormatter
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
 import os
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+matplotlib.use('Agg')
+
+from matplotlib import rc
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
+#matplotlib.rcParams['figure.dpi'] = 400
 
 # Read the netCDF file
 path = "Data/nc/n_si_ratio_surf.nc"
 data = nc.Dataset(path)
 var_name = os.path.basename(path).split(".")[0]  # Check variable name first
+
 
 # Extract the latitude and longitude variables
 lat_var = data.variables.get('y')
@@ -20,6 +32,7 @@ lon = lon_var[:]
 
 # Extract the data variable you want to plot
 var = data.variables[var_name][:]
+print(var.min(), var.max())
 
 # Check for NaNs in the data
 nan_mask = np.isnan(var)
@@ -27,24 +40,23 @@ nan_mask = np.isnan(var)
 # Replace NaNs with 1000
 var[nan_mask] = 1000
 
+#Taking log of the ratio
+var = np.log10(var)
+
+
 # Create a figure and axes with a specific projection
 fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
-# Define the MidPointLogNorm class
-class MidPointLogNorm(LogNorm):
-    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
-        LogNorm.__init__(self,vmin=vmin, vmax=vmax, clip=clip)
-        self.midpoint=midpoint
-    def __call__(self, value, clip=None):
-        value = np.ma.masked_invalid(value)
-        x, y = [np.log(self.vmin), np.log(self.midpoint), np.log(self.vmax)], [0, 0.5, 1]
-        print(f'Min value = {value.min()}, max value = {value.max()}')
-        z = np.ma.masked_array(np.interp(np.log(value), x, y))
-        print(z.min(), z.max())
-        return z
+# Creating levels
+#norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
 
 # Plot the data on a latitude and longitude scale
-im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PiYG', norm=MidPointLogNorm(vmin=0.0001, vmax=10, midpoint=1))
+#im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(),  cmap='coolwarm')
+
+
+
+# Plot the data on a latitude and longitude scale
+im = ax.pcolormesh(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PiYG', norm=CenteredNorm(vcenter=0))
 
 # Set the extent of the map to match your data
 ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
@@ -61,9 +73,20 @@ ax.add_feature(cfeature.LAND, zorder=1, facecolor='w')
 
 # Add coastlines
 ax.coastlines('50m')
+#ax.add_feature(cfeature.COASTLINE, zorder=2)
+
+# Define your custom tick formatter function to undo the log transformation
+def custom_formatter(x, pos):
+    return f'{10**x:.0f}'  # Undo the log transformation
+
+# Create your lambda function
+custom_formatter_lambda = lambda x, pos: f'{10**x:.0f}'
 
 # Add a colorbar
 cbar = plt.colorbar(im, ax=ax)
+cbar.ax.yaxis.set_major_formatter(FuncFormatter(custom_formatter))
+# Or using the lambda function
+cbar.ax.yaxis.set_major_formatter(FuncFormatter(custom_formatter_lambda))
 
 # Set the title and labels
 ax.set_title(r'Si/NO$^{3}$ Ratio')
