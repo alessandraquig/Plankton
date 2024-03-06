@@ -43,6 +43,7 @@ def plot_bathymetry():
     downsampled_lon = lon[::downsample_factor]
     downsampled_lat = lat[::downsample_factor]
     downsampled_var = var[::downsample_factor, ::downsample_factor]
+    print("Passed downsampling")
 
     # Create a figure and axes with a specific projection
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -55,14 +56,15 @@ def plot_bathymetry():
 
     # Plot the data on a latitude and longitude scale
     im = ax.pcolormesh(downsampled_lon, downsampled_lat, downsampled_var, transform=ccrs.PlateCarree(), cmap='viridis', vmax=0)
+    print('Created image')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 
@@ -86,9 +88,11 @@ def plot_bathymetry():
 if __name__ == '__main__':
 
     im, ax, cbar = plot_bathymetry()
+    print('Plotted bathymetry')
 
     # Save the plot as a tif file
-    plt.savefig('Output/bathymetry.tif', format='tif')
+    plt.savefig('Output/bathymetry_map.pdf', format='pdf')
+    print('Saved figure')
 
     # Close the plot
     plt.close()

@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
-import os
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 matplotlib.use('Agg')

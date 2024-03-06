@@ -1,7 +1,7 @@
 import netCDF4 as nc
 
 # Open the NetCDF file
-file_path = "Data/zooturnoverdepth.nc"
+file_path = "Data/nc/n_si_ratio_surf.nc"
 dataset = nc.Dataset(file_path)
 
 
