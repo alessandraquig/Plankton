@@ -21,7 +21,7 @@ if __name__ == '__main__':
     rows = 2
     cols = 2
     fig_enviro = plt.figure(figsize=(10, 8))
-    fig_enviro.suptitle("Environmental Factors")
+    fig_enviro.suptitle("Environmental Factors", fontsize=16)
     im_DO, ax_DO, cbar_DO = pf.DO(layer='depth', fig=fig_enviro, rows=rows, cols=cols, pos=1)
     ax_DO.set_title(r'Dissolved Oxygen')
     im_SST, ax_SST, cbar_SST = pf.SST(fig=fig_enviro, rows=rows, cols=cols, pos=2)
@@ -32,4 +32,7 @@ if __name__ == '__main__':
     ax_chlorophyll.set_title(r'Chlorophyll Concentration ($mg/m^{3}$)')
     plt.tight_layout()
     plt.savefig('Output/environmental_factors.pdf')
+
+    # Plot biological data (Figure 2)
+    
 
