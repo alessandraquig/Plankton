@@ -25,7 +25,13 @@ def plot_turnover(plankton, layer):
     path = f"Data/{plankton}turnover{layer}.nc"
 
     data = nc.Dataset(path)
-    var_name = 'turnover'
+    if plankton == 'zoo':
+        var_name = 'turnover'
+    elif plankton == 'phyto':
+        if layer == 'surf':
+            var_name = 'phytturnoversurf'
+        elif layer == 'depth':
+            var_name = 'phytoturnoverdepth'
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
