@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.colors import TwoSlopeNorm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
@@ -41,6 +42,7 @@ def plot_turnover(plankton, layer):
     # Extract the data variable you want to plot
     var = data.variables[var_name][:]
     var[var <= 0] = 1e-2
+    var[var > 1] = 1
     print(var.min(), var.max())
 
 
@@ -48,15 +50,15 @@ def plot_turnover(plankton, layer):
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PuRd')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, vmin=0, vmax=1, transform=ccrs.PlateCarree(), cmap='PuRd', levels=15)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 

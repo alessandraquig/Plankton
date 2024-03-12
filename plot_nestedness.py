@@ -57,12 +57,12 @@ def plot_nestedness(plankton, layer):
     #im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='YlOrRd', norm=matplotlib.colors.LogNorm(vmin=1e-4, vmax=1), extend='min') # levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 12), vmax=1, vmin=1e-4, extend='min')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-180, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-180, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 

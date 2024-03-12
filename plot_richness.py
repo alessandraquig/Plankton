@@ -52,12 +52,12 @@ def plot_richness(plankton, layer):
     im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 
@@ -70,6 +70,8 @@ def plot_richness(plankton, layer):
 
     # Add a colorbar
     cbar = plt.colorbar(im, ax=ax)
+    cbar.ax.yaxis.set_major_locator(plt.LogLocator())
+
 
     # Set the title and labels
     if layer == "surf":
