@@ -17,16 +17,29 @@ this_rc_params = {
 plt.rcParams.update(this_rc_params)
 #matplotlib.rcParams['figure.dpi'] = 400
 
-def plot_getis(plankton, layer):
+def plot_getis(plankton, layer, fig, rows, cols, pos):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
     :return: fig, ax, cbar
     """
-    path = f"Data/{plankton}getis{layer}.nc"
+
+    if plankton == "phyto":
+        if layer == "surf":
+            path = "Data/nc/GiPhytoSurface.nc"
+            var_name = 'GiPhytoSurf'
+        elif layer == "depth":
+            path = "Data/nc/GiPhytoDepth.nc"
+            var_name = 'PhytoGisDepth'
+    elif plankton == "zoo":
+        if layer == "surf":
+            path = "Data/nc/GizooSurface.nc"
+            var_name = 'ZooGisurf'
+        elif layer == "depth":
+            path = "Data/nc/GizooDepth1.nc"
+            var_name = 'GiZooDepth1.tif'
 
     data = nc.Dataset(path)
-    var_name = os.path.basename(path).split(".")[0] # Check this
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -47,7 +60,7 @@ def plot_getis(plankton, layer):
 
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Norm the data so 1 is neutral
     #norm=colors.TwoSlopeNorm(vmin=0, vcenter=1, vmax=3.5)
@@ -77,10 +90,6 @@ def plot_getis(plankton, layer):
     cbar = plt.colorbar(im, ax=ax)
 
     # Set the title and labels
-    if layer == "surf":
-        layer_name = "Epipelagic"
-    if layer == "depth":
-        layer_name = "Mesopelagic"
     ax.set_title(rf'Getis Ord')
     #ax.set_xlabel(r'Longitude')
     #ax.set_ylabel(r'Latitude')
@@ -96,7 +105,8 @@ if __name__ == "__main__":
     if layer == "depth":
         layer_name = "meso"
 
-    im, ax, cbar = plot_getis('phyto', 'surf')
+    fig_getis = plt.figure(figsize=(10, 6))
+    im, ax, cbar = plot_getis(plankton='phyto', layer='surf', fig=fig_getis, rows=1, cols=1, pos=1)
     ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Getis Ord')
 
     # Save the plot as a tif file
