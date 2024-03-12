@@ -5,6 +5,7 @@ import cartopy.feature as cfeature
 import netCDF4 as nc
 import numpy as np
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+from matplotlib.colors import LogNorm, TwoSlopeNorm
 import os
 
 matplotlib.use('Agg')
@@ -16,7 +17,7 @@ this_rc_params = {
 }
 plt.rcParams.update(this_rc_params)
 
-def bathymetry():
+def bathymetry(fig, rows, cols, pos=1):
 
     # Read the netCDF file
     path = "Data/bathymetry.nc"
@@ -47,7 +48,8 @@ def bathymetry():
     print("Passed downsampling")
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Creating levels
     #norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
@@ -86,7 +88,7 @@ def bathymetry():
 
     return im, ax, cbar
 
-def DO(layer):
+def DO(layer, fig, rows, cols, pos=1):
 
     if layer == 'depth':
         path = "Data/nc/DO_200m.nc"
@@ -108,7 +110,8 @@ def DO(layer):
     print(var.min(), var.max())
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Creating levels
     #norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
@@ -146,7 +149,7 @@ def DO(layer):
 
     return im, ax, cbar
 
-def SiNO3(layer):
+def SiNO3(layer, fig, rows, cols, pos=1):
     if layer == 'depth':
         path = "Data/nc/n_si_ratio_200m.nc"
     elif layer == 'surf':
@@ -172,7 +175,8 @@ def SiNO3(layer):
     logvar = np.ma.log(var)/np.ma.log(base)
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Plot the data on a latitude and longitude scale
     im = ax.pcolormesh(lon, lat, logvar, transform=ccrs.PlateCarree(), cmap='PiYG', norm=TwoSlopeNorm(vcenter=np.log10(1), vmax=np.log10(10), vmin=np.log10(0.0004)))
@@ -208,7 +212,7 @@ def SiNO3(layer):
 
     return im, ax, cbar
 
-def chlorophyll():
+def chlorophyll(fig, rows, cols, pos=1):
     path = "Data/chlorophyll_mean.nc"
     data = nc.Dataset(path)
     var_name = "chlorophyll"
@@ -224,7 +228,8 @@ def chlorophyll():
     print(f'min = {var.min()}, max = {var.max()}, mean = {var.mean()}')
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Plot the data on a latitude and longitude scale using the custom colormap
     im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Greens', norm=LogNorm(), levels=np.logspace(-2, 1, 7))
@@ -255,7 +260,7 @@ def chlorophyll():
 
     return im, ax, cbar
 
-def SST():
+def SST(fig, rows, cols, pos=1):
 
     # Read the netCDF file
     path = "Data/SST_mean.nc"
@@ -282,7 +287,8 @@ def SST():
     print(var.min(), var.max())
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Creating levels
     #norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
@@ -320,7 +326,7 @@ def SST():
 
     return im, ax, cbar
 
-def richness(plankton, layer):
+def richness(plankton, layer, fig, rows, cols, pos=1):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
@@ -350,7 +356,8 @@ def richness(plankton, layer):
 
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Plot the data on a latitude and longitude scale
     im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
@@ -387,7 +394,7 @@ def richness(plankton, layer):
 
     return im, ax, cbar
 
-def nestedness(plankton, layer):
+def nestedness(plankton, layer, fig, rows, cols, pos=1):
 
     path = f"Data/{plankton}nestedness{layer}.nc"
 
@@ -415,7 +422,8 @@ def nestedness(plankton, layer):
     print(var.min(), var.max())
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Creating levels
     #norm = BoundaryNorm(levels=np.linspace(), ncolors=cmap.N, clip=True)
@@ -454,7 +462,7 @@ def nestedness(plankton, layer):
 
     return im, ax, cbar
 
-def turnover(plankton, layer):
+def turnover(plankton, layer, fig, rows, cols, pos=1):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
@@ -485,7 +493,8 @@ def turnover(plankton, layer):
 
 
     # Create a figure and axes with a specific projection
-    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Plot the data on a latitude and longitude scale
     im = ax.contourf(lon, lat, var, vmin=0, vmax=1, transform=ccrs.PlateCarree(), cmap='PuRd', levels=15)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
