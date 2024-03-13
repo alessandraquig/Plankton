@@ -127,7 +127,7 @@ def DO(layer, fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -186,7 +186,7 @@ def SiNO3(layer, fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -239,8 +239,8 @@ def chlorophyll(fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 
@@ -304,7 +304,7 @@ def SST(fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -336,6 +336,8 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
 
     data = nc.Dataset(path)
     var_name = os.path.basename(path).split(".")[0] # Check this
+    if plankton == "zoo":
+        var_name = "richness"
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -367,7 +369,7 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -401,7 +403,8 @@ def nestedness(plankton, layer, fig, rows, cols, pos=1):
 
     data = nc.Dataset(path)
     var_name = os.path.basename(path).split(".")[0] # Check this
-    print(f"Variable name: {var_name}")
+    if plankton == 'zoo':
+        var_name = 'nestedness'
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -436,11 +439,11 @@ def nestedness(plankton, layer, fig, rows, cols, pos=1):
     #im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='YlOrRd', norm=matplotlib.colors.LogNorm(vmin=1e-4, vmax=1), extend='min') # levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 12), vmax=1, vmin=1e-4, extend='min')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -70, -60, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -510,7 +513,7 @@ def turnover(plankton, layer, fig, rows, cols, pos=1):
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -536,7 +539,7 @@ def turnover(plankton, layer, fig, rows, cols, pos=1):
 
     return im, ax, cbar
 
-def getis(plankton, layer, fig, rows, cols, pos=1):
+def getis(plankton, layer, fig, rows, cols, pos):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
@@ -586,15 +589,15 @@ def getis(plankton, layer, fig, rows, cols, pos=1):
     norm = matplotlib.colors.LogNorm()
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='PiYG', norm=norm)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='seismic', norm=norm)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
-    ax.set_extent([-180, -65, -70, 0], crs=ccrs.PlateCarree())
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-180, -55, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(-70, 10, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
 
@@ -609,12 +612,9 @@ def getis(plankton, layer, fig, rows, cols, pos=1):
     cbar = plt.colorbar(im, ax=ax)
 
     # Set the title and labels
-    if layer == "surf":
-        layer_name = "Epipelagic"
-    if layer == "depth":
-        layer_name = "Mesopelagic"
     ax.set_title(rf'Getis Ord')
     #ax.set_xlabel(r'Longitude')
     #ax.set_ylabel(r'Latitude')
 
     return im, ax, cbar
+

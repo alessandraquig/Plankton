@@ -1,6 +1,5 @@
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import colors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import netCDF4 as nc
@@ -17,29 +16,16 @@ this_rc_params = {
 plt.rcParams.update(this_rc_params)
 #matplotlib.rcParams['figure.dpi'] = 400
 
-def plot_getis(plankton, layer, fig, rows, cols, pos):
+def SDM_spatial(plankton, layer, fig, rows, cols, pos=1):
     """
     :param plankton: "phyto" or "zoo"
     :param layer: "surf" or "depth"
     :return: fig, ax, cbar
     """
-
-    if plankton == "phyto":
-        if layer == "surf":
-            path = "Data/nc/GiPhytoSurface.nc"
-            var_name = 'GiPhytoSurf'
-        elif layer == "depth":
-            path = "Data/nc/GiPhytoDepth.nc"
-            var_name = 'PhytoGisDepth'
-    elif plankton == "zoo":
-        if layer == "surf":
-            path = "Data/nc/GizooSurface.nc"
-            var_name = 'ZooGisurf'
-        elif layer == "depth":
-            path = "Data/nc/GizooDepth1.nc"
-            var_name = 'GiZooDepth1.tif'
+    path = f"Data/spatial{plankton}{layer}.nc"
 
     data = nc.Dataset(path)
+    var_name = os.path.basename(path).split(".")[0] # Check this
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -60,21 +46,18 @@ def plot_getis(plankton, layer, fig, rows, cols, pos):
 
 
     # Create a figure and axes with a specific projection
+    #fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
     ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
-    # Norm the data so 1 is neutral
-    #norm=colors.TwoSlopeNorm(vmin=0, vcenter=1, vmax=3.5)
-    norm = matplotlib.colors.LogNorm()
-
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='seismic', norm=norm)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='plasma')
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -88,9 +71,14 @@ def plot_getis(plankton, layer, fig, rows, cols, pos):
 
     # Add a colorbar
     cbar = plt.colorbar(im, ax=ax)
+    cbar.ax.yaxis.set_major_locator(plt.LogLocator())
 
     # Set the title and labels
-    ax.set_title(rf'Getis Ord')
+    if layer == "surf":
+        layer_name = "Epipelagic"
+    if layer == "depth":
+        layer_name = "Mesopelagic"
+    ax.set_title(rf'Richness')
     #ax.set_xlabel(r'Longitude')
     #ax.set_ylabel(r'Latitude')
 
@@ -98,19 +86,20 @@ def plot_getis(plankton, layer, fig, rows, cols, pos):
 
 if __name__ == "__main__":
 
-    layer = 'surf'
-    plankton = 'phyto'
+    layer = 'depth'
+    plankton = 'zoo'
     if layer == "surf":
         layer_name = "epi"
     if layer == "depth":
         layer_name = "meso"
 
-    fig_getis = plt.figure(figsize=(10, 6))
-    im, ax, cbar = plot_getis(plankton='phyto', layer='surf', fig=fig_getis, rows=1, cols=1, pos=1)
-    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Getis Ord')
+    fig_spatial = plt.figure(figsize=(10, 6))
+
+    im, ax, cbar = SDM_spatial(plankton, layer, fig_spatial, rows=1, cols=1)
+    ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Spatial Random Effect')
 
     # Save the plot as a tif file
-    plt.savefig(f'Output/{layer_name}_{plankton}_getis.tif', format='tif')
+    plt.savefig(f'Output/{layer_name}_{plankton}_turn.tif', format='tif')
 
     # Close the plot
     plt.close()

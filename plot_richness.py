@@ -26,6 +26,8 @@ def plot_richness(plankton, layer):
 
     data = nc.Dataset(path)
     var_name = os.path.basename(path).split(".")[0] # Check this
+    if var_name == "zoorichnesssurf":
+        var_name = "richness"
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
