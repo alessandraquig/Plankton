@@ -56,7 +56,7 @@ def plot_turnover(plankton, layer):
     fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, vmin=0, vmax=1, transform=ccrs.PlateCarree(), cmap='PuRd', levels=15)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, vmin=0, vmax=1, transform=ccrs.PlateCarree(), cmap='PuRd_r', levels=15)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())

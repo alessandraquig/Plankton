@@ -549,10 +549,10 @@ def getis(plankton, layer, fig, rows, cols, pos):
     if plankton == "phyto":
         if layer == "surf":
             path = "Data/nc/GiPhytoSurface.nc"
-            var_name = 'GiPhytoSurf'
+            var_name = 'phytgetissurf'
         elif layer == "depth":
             path = "Data/nc/GiPhytoDepth.nc"
-            var_name = 'PhytoGisDepth'
+            var_name = 'GiPhytoDepth'
     elif plankton == "zoo":
         if layer == "surf":
             path = "Data/nc/GizooSurface.nc"
@@ -586,17 +586,19 @@ def getis(plankton, layer, fig, rows, cols, pos):
 
     # Norm the data so 1 is neutral
     #norm=colors.TwoSlopeNorm(vmin=0, vcenter=1, vmax=3.5)
-    norm = matplotlib.colors.LogNorm()
+    boundaries = np.array([-4, -3, -2, -1, 1, 2, 3, 4])
+    norm = matplotlib.colors.BoundaryNorm(boundaries=boundaries, ncolors=10, extend='both')
+    print(norm([-3.4, -2.5, 2, 0.4, -0.8]))
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='seismic', norm=norm)#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='seismic', levels=[-3, -2, -1, 1, 2, 3], extend='both')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
 
     # Add parallels and meridians
     ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
-    ax.set_xticks(np.arange(-160, -60, 20), crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
     ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -617,6 +619,7 @@ def getis(plankton, layer, fig, rows, cols, pos):
     #ax.set_ylabel(r'Latitude')
 
     return im, ax, cbar
+
 
 def SDM_spatial(plankton, layer, fig, rows, cols, pos=1):
     """
