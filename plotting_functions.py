@@ -548,17 +548,17 @@ def getis(plankton, layer, fig, rows, cols, pos):
 
     if plankton == "phyto":
         if layer == "surf":
-            path = "Data/nc/GiPhytoSurface.nc"
-            var_name = 'phytgetissurf'
+            path = "Data/getis_phyto_surf.nc"
+            var_name = 'GiPhytosurface'
         elif layer == "depth":
-            path = "Data/nc/GiPhytoDepth.nc"
+            path = "Data/getis_phyto_depth.nc"
             var_name = 'GiPhytoDepth'
     elif plankton == "zoo":
         if layer == "surf":
-            path = "Data/nc/GizooSurface.nc"
-            var_name = 'ZooGisurf'
+            path = "Data/getis_zoo_surf.nc"
+            var_name = 'Gizoosurface'
         elif layer == "depth":
-            path = "Data/nc/GizooDepth1.nc"
+            path = "Data/getis_zoo_depth.nc"
             var_name = 'GiZooDepth1.tif'
 
     data = nc.Dataset(path)
@@ -577,7 +577,6 @@ def getis(plankton, layer, fig, rows, cols, pos):
 
     # Extract the data variable you want to plot
     var = data.variables[var_name][:]
-    var[var <= 0] = 1e-2
     print(var.min(), var.max())
 
 
@@ -591,7 +590,7 @@ def getis(plankton, layer, fig, rows, cols, pos):
     print(norm([-3.4, -2.5, 2, 0.4, -0.8]))
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='seismic', levels=[-3, -2, -1, 1, 2, 3], extend='both')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='coolwarm', levels=[-3, -2, -1, 1, 2, 3], extend='both')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
