@@ -338,6 +338,9 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
     var_name = os.path.basename(path).split(".")[0] # Check this
     if plankton == "zoo":
         var_name = "richness"
+    if var_name == "zoorichnesssurf":
+        var_name = "richness"
+    print(f"Variable name: {var_name}")
 
     # Extract the latitude and longitude variables
     lat_var = data.variables.get('lat') or data.variables.get('latitude')
@@ -353,8 +356,8 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
 
     # Extract the data variable you want to plot
     var = data.variables[var_name][:]
-    var[var <= 0] = 1e-2
-    print(var.min(), var.max())
+    var[var <= 0] = 1e-8
+    print(f'Minimum richness = {var.min()}, maximum richness = {var.max()}')
 
 
     # Create a figure and axes with a specific projection
@@ -362,7 +365,9 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
     ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=ccrs.PlateCarree())
 
     # Plot the data on a latitude and longitude scale
-    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', 
+                     norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), 
+                                                                          np.log10(var.max()), 10), extend='max')
 
     # Set the extent of the map to match your data
     ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
@@ -384,6 +389,76 @@ def richness(plankton, layer, fig, rows, cols, pos=1):
     # Add a colorbar
     cbar = plt.colorbar(im, ax=ax)
     cbar.ax.yaxis.set_major_locator(plt.LogLocator())
+
+    # Set the title and labels
+    if layer == "surf":
+        layer_name = "Epipelagic"
+    if layer == "depth":
+        layer_name = "Mesopelagic"
+    ax.set_title(rf'Richness')
+    #ax.set_xlabel(r'Longitude')
+    #ax.set_ylabel(r'Latitude')
+
+    return im, ax, cbar
+
+def richness2(plankton, layer):
+    """
+    :param plankton: "phyto" or "zoo"
+    :param layer: "surf" or "depth"
+    :return: fig, ax, cbar
+    """
+    path = f"Data/{plankton}richness{layer}.nc"
+
+    data = nc.Dataset(path)
+    var_name = os.path.basename(path).split(".")[0] # Check this
+    if var_name == "zoorichnesssurf":
+        var_name = "richness"
+
+    # Extract the latitude and longitude variables
+    lat_var = data.variables.get('lat') or data.variables.get('latitude')
+    if lat_var is not None:
+        lat = lat_var[:]
+    else:
+        raise ValueError("Latitude variable not found in the netCDF file.")
+    lon_var = data.variables.get('lon') or data.variables.get('longitude')
+    if lon_var is not None:
+        lon = lon_var[:]
+    else:
+        raise ValueError("Longitude variable not found in the netCDF file.")
+
+    # Extract the data variable you want to plot
+    var = data.variables[var_name][:]
+    #var[var <= 0] = 1e-8
+    print(var.min(), var.max())
+
+
+    # Create a figure and axes with a specific projection
+    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+
+    # Plot the data on a latitude and longitude scale
+    im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='Purples', norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')
+
+    # Set the extent of the map to match your data
+    ax.set_extent([-160, -70, -60, 0], crs=ccrs.PlateCarree())
+
+    # Add parallels and meridians
+    ax.gridlines(draw_labels=False, linewidth=0.5, color='grey', alpha=0.5, linestyle='-')
+    ax.set_xticks(np.arange(-160, -60, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(-60, 10, 10), crs=ccrs.PlateCarree())
+    ax.xaxis.set_major_formatter(LongitudeFormatter())
+    ax.yaxis.set_major_formatter(LatitudeFormatter())
+
+    # Mask out land
+    ax.add_feature(cfeature.LAND, zorder=1, facecolor='w')
+
+    # Add coastlines
+    ax.coastlines('50m')
+    #ax.add_feature(cfeature.COASTLINE, zorder=2)
+
+    # Add a colorbar
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.ax.yaxis.set_major_locator(plt.LogLocator())
+
 
     # Set the title and labels
     if layer == "surf":
@@ -585,9 +660,9 @@ def getis(plankton, layer, fig, rows, cols, pos):
 
     # Norm the data so 1 is neutral
     #norm=colors.TwoSlopeNorm(vmin=0, vcenter=1, vmax=3.5)
-    boundaries = np.array([-4, -3, -2, -1, 1, 2, 3, 4])
-    norm = matplotlib.colors.BoundaryNorm(boundaries=boundaries, ncolors=10, extend='both')
-    print(norm([-3.4, -2.5, 2, 0.4, -0.8]))
+    #boundaries = np.array([-4, -3, -2, -1, 1, 2, 3, 4])
+    #norm = matplotlib.colors.BoundaryNorm(boundaries=boundaries, ncolors=10, extend='both')
+    #print(norm([-3.4, -2.5, 2, 0.4, -0.8]))
 
     # Plot the data on a latitude and longitude scale
     im = ax.contourf(lon, lat, var, transform=ccrs.PlateCarree(), cmap='coolwarm', levels=[-3, -2, -1, 1, 2, 3], extend='both')#, norm=matplotlib.colors.LogNorm(), levels=np.logspace(np.log10(var.min()), np.log10(var.max()), 10), extend='max')

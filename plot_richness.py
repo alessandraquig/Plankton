@@ -26,7 +26,7 @@ def plot_richness(plankton, layer):
 
     data = nc.Dataset(path)
     var_name = os.path.basename(path).split(".")[0] # Check this
-    if var_name == "zoorichnesssurf":
+    if plankton == "zoo":
         var_name = "richness"
 
     # Extract the latitude and longitude variables
@@ -43,8 +43,8 @@ def plot_richness(plankton, layer):
 
     # Extract the data variable you want to plot
     var = data.variables[var_name][:]
-    var[var <= 0] = 1e-2
-    print(var.min(), var.max())
+    var[var <= 0] = 1e-8
+    print(var.min(), var.max(), var.mean())
 
 
     # Create a figure and axes with a specific projection
@@ -89,13 +89,13 @@ def plot_richness(plankton, layer):
 if __name__ == "__main__":
 
     layer = 'surf'
-    plankton = 'phyto'
+    plankton = 'zoo'
     if layer == "surf":
         layer_name = "epi"
     if layer == "depth":
         layer_name = "meso"
 
-    im, ax, cbar = plot_richness('phyto', 'surf')
+    im, ax, cbar = plot_richness(plankton, layer)
     ax.set_title(rf'{layer_name.capitalize()}pelagic {plankton.capitalize()}plankton Richness')
 
     # Save the plot as a tif file

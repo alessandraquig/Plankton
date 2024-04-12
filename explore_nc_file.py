@@ -1,7 +1,7 @@
 import netCDF4 as nc
 
 # Open the NetCDF file
-file_path = "Data/getis_phyto_surf.nc"
+file_path = "Data/zoorichnesssurf.nc"
 dataset = nc.Dataset(file_path)
 
 
